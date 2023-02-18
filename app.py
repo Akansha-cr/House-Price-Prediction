@@ -2,39 +2,35 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-# Set the title and subtitle of the web app
-st.title('House Price Prediction System')
-st.write('Upload a CSV file to generate house price predictions:')
+# Load data
+df = pd.read_csv('housing.csv')
 
-# Create a file upload control for the CSV file
-uploaded_file = st.file_uploader("Choose a file", type="csv")
+# Build model
+model = LinearRegression()
+model.fit(df[['sqft_living', 'bedrooms', 'bathrooms', 'floors', 'waterfront', 'view', 'condition', 'grade', 'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode', 'lat', 'long']], df['price'])
 
-# If the file is uploaded and not empty
-if uploaded_file is not None:
-    # Read the CSV file
-    df = pd.read_csv(uploaded_file)
+# Define UI elements
+st.title("House Price Prediction System")
+st.header("Enter House Details")
+sqft_living = st.number_input("Living Area (in sqft)")
+bedrooms = st.number_input("No. of Bedrooms")
+bathrooms = st.number_input("No. of Bathrooms")
+floors = st.number_input("No. of Floors")
+waterfront = st.selectbox("Waterfront", [0, 1])
+view = st.selectbox("View", [0, 1, 2, 3, 4])
+condition = st.selectbox("Condition", [1, 2, 3, 4, 5])
+grade = st.selectbox("Grade", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
+sqft_above = st.number_input("Area Above Ground (in sqft)")
+sqft_basement = st.number_input("Basement Area (in sqft)")
+yr_built = st.number_input("Year Built")
+yr_renovated = st.number_input("Year Renovated")
+zipcode = st.number_input("Zipcode")
+lat = st.number_input("Latitude")
+long = st.number_input("Longitude")
 
-    # Display the raw data
-    st.write('Raw Data:')
-    st.write(df)
+# Predict house price
+price = model.predict([[sqft_living, bedrooms, bathrooms, floors, waterfront, view, condition, grade, sqft_above, sqft_basement, yr_built, yr_renovated, zipcode, lat, long]])
 
-    # Create a linear regression model
-    model = LinearRegression()
-
-    # Train the model
-    X = df.drop('price', axis=1)
-    y = df['price']
-    model.fit(X, y)
-
-    # Get the input data from the user
-    st.write('Enter the values for the following features:')
-    inputs = {}
-    for feature in X.columns:
-        value = st.number_input(feature)
-        inputs[feature] = value
-    input_df = pd.DataFrame([inputs])
-
-    # Make a prediction and display the result
-    prediction = model.predict(input_df)
-    st.write('Prediction:')
-    st.write(prediction[0])
+# Show predicted price
+st.subheader("Predicted House Price")
+st.write(price[0])
