@@ -1,70 +1,40 @@
 import streamlit as st
-import pickle
+import pandas as pd
+from sklearn.linear_model import LinearRegression
 
+# Set the title and subtitle of the web app
+st.title('House Price Prediction System')
+st.write('Upload a CSV file to generate house price predictions:')
 
-def main():
-    style = """<div style='background-color:pink; padding:12px'>
-              <h1 style='color:black'>House Price Prediction App</h1>
-       </div>"""
-    st.markdown(style, unsafe_allow_html=True)
-    left, right = st.columns((2,2))
-    longitude = left.number_input('Enter the Longitude in negative number',
-                                  step =1.0, format="%.2f", value=-21.34)
-    latitude = right.number_input('Enter the Latitude in positive number',
-                                  step=1.0, format='%.2f', value= 35.84)
-    housing_median_age = left.number_input('Enter the median age of the building',
-                                           step=1.0, format='%.1f', value=25.0)
-    total_rooms = right.number_input('How many rooms are there in the house?',
-                                     step=1.0, format='%.1f', value=56.0)
-    total_bedrooms = left.number_input('How many bedrooms are there in the house?',
-                                       step=1.0, format='%.1f', value=15.0)
-    population = right.number_input('Population of people within a block',
-                                    step=1.0, format='%.1f', value=250.0)
-    households = left.number_input('Poplulation of a household',  step=1.0,
-                                   format='%.1f',value=43.0)
-    median_income = right.number_input('Median_income of a household in Dollars',
-                                       step=1.0, format='%.1f', value=3000.0)    
-    ocean_proximity = st.selectbox('How close to the sea is the house?',
-                    ('<1H OCEAN', 'INLAND', 'NEAR OCEAN', 'NEAR BAY', 'ISLAND'))
-    button = st.button('Predict')
-    
-    # if button is pressed
-    if button:
-        
-        # make prediction
-        result = predict(longitude, latitude, housing_median_age,
-                         total_rooms,total_bedrooms, population,
-                         households, median_income, ocean_proximity)
-        st.success(f'The value of the house is ${result}')
-        
-        
-# load the train model
-with open('rf_model.pkl', 'rb') as rf:
-    model = pickle.load(rf)
+# Create a file upload control for the CSV file
+uploaded_file = st.file_uploader("Choose a file", type="csv")
 
+# If the file is uploaded and not empty
+if uploaded_file is not None:
+    # Read the CSV file
+    df = pd.read_csv(uploaded_file)
 
-# load the StandardScaler
-with open('scaler.pkl', 'rb') as stds:
-    scaler = pickle.load(stds)
+    # Display the raw data
+    st.write('Raw Data:')
+    st.write(df)
 
+    # Create a linear regression model
+    model = LinearRegression()
 
-def predict(longitude, latitude, housing_median_age,
-            total_rooms, total_bedrooms, population, 
-            households, median_income, ocean_pro):
-    
-    # processing user input
-    ocean = 0 if ocean_pro == '<1H OCEAN' else 1 if ocean_pro == 'INLAND' else 2 if ocean_pro == 'ISLAND' else 3 if ocean_pro == 'NEAR BAY' else 4
-    med_income = median_income / 5
-    lists = [longitude, latitude, housing_median_age, total_rooms,
-             total_bedrooms, population, households, med_income, ocean]
-    
-    df = pd.DataFrame(lists).transpose()
+    # Train the model
+    X = df.drop('price', axis=1)
+    y = df['price']
+    model.fit(X, y)
 
-    # scaling the data
-    scaler.transform(df)
+    # Get the input data from the user
+    st.write('Enter the values for the following features:')
+    inputs = {}
+    for feature in X.columns:
+        value = st.number_input(feature)
+        inputs[feature] = value
+    input_df = pd.DataFrame([inputs])
 
-    # making predictions using the train model
-    prediction = model.predict(df)
-
-    result = int(prediction)
-    return result
+    # Make a prediction and display the result
+    prediction = model.predict(input_df)
+    st.write('Prediction:')
+    st.write(prediction[0])
