@@ -7,29 +7,23 @@ df = pd.read_csv('housing.csv')
 
 # Build model
 model = LinearRegression()
-model.fit(df[['sqft_living', 'bedrooms', 'bathrooms', 'floors', 'waterfront', 'view', 'condition', 'grade', 'sqft_above', 'sqft_basement', 'yr_built', 'yr_renovated', 'zipcode', 'lat', 'long']], df['price'])
+model.fit(df[['latitude', 'longitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','price']], df['price'])
 
 # Define UI elements
 st.title("House Price Prediction System")
 st.header("Enter House Details")
-sqft_living = st.number_input("Living Area (in sqft)")
-bedrooms = st.number_input("No. of Bedrooms")
-bathrooms = st.number_input("No. of Bathrooms")
-floors = st.number_input("No. of Floors")
-waterfront = st.selectbox("Waterfront", [0, 1])
-view = st.selectbox("View", [0, 1, 2, 3, 4])
-condition = st.selectbox("Condition", [1, 2, 3, 4, 5])
-grade = st.selectbox("Grade", [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13])
-sqft_above = st.number_input("Area Above Ground (in sqft)")
-sqft_basement = st.number_input("Basement Area (in sqft)")
-yr_built = st.number_input("Year Built")
-yr_renovated = st.number_input("Year Renovated")
-zipcode = st.number_input("Zipcode")
-lat = st.number_input("Latitude")
-long = st.number_input("Longitude")
+total_bedrooms = st.number_input("No. of Bedrooms")
+total_rooms = st.number_input("No. of rooms")
+latitude = st.number_input("Latitude")
+longitude = st.number_input("Longitude")
+housing_median_age = st.number_input("housing_median_age")
+population = st.number_input("population")
+households = st.number_input("households")
+median_income = st.number_input("median income")
+price = st.number_input("price")
 
 # Predict house price
-price = model.predict([[sqft_living, bedrooms, bathrooms, floors, waterfront, view, condition, grade, sqft_above, sqft_basement, yr_built, yr_renovated, zipcode, lat, long]])
+price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
 
 # Show predicted price
 st.subheader("Predicted House Price")
