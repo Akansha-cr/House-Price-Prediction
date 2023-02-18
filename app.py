@@ -36,3 +36,35 @@ def main():
                          total_rooms,total_bedrooms, population,
                          households, median_income, ocean_proximity)
         st.success(f'The value of the house is ${result}')
+        
+        
+# load the train model
+with open('rf_model.pkl', 'rb') as rf:
+    model = pickle.load(rf)
+
+
+# load the StandardScaler
+with open('scaler.pkl', 'rb') as stds:
+    scaler = pickle.load(stds)
+
+
+def predict(longitude, latitude, housing_median_age,
+            total_rooms, total_bedrooms, population, 
+            households, median_income, ocean_pro):
+    
+    # processing user input
+    ocean = 0 if ocean_pro == '<1H OCEAN' else 1 if ocean_pro == 'INLAND' else 2 if ocean_pro == 'ISLAND' else 3 if ocean_pro == 'NEAR BAY' else 4
+    med_income = median_income / 5
+    lists = [longitude, latitude, housing_median_age, total_rooms,
+             total_bedrooms, population, households, med_income, ocean]
+    
+    df = pd.DataFrame(lists).transpose()
+
+    # scaling the data
+    scaler.transform(df)
+
+    # making predictions using the train model
+    prediction = model.predict(df)
+
+    result = int(prediction)
+    return result
