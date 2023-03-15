@@ -20,11 +20,24 @@ housing_median_age = st.number_input("housing_median_age")
 population = st.number_input("population")
 households = st.number_input("households")
 median_income = st.number_input("median income")
-price = st.number_input("price")
 
-# Predict house price
+# Add file uploader
+csv_file = st.file_uploader("Upload CSV", type=['csv'])
+
+if csv_file is not None:
+    # Read uploaded CSV file
+    uploaded_data = pd.read_csv(csv_file)
+
+    # Generate predictions for uploaded data
+    predictions = model.predict(uploaded_data[['latitude', 'longitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'price']])
+
+    # Show predicted prices
+    st.subheader("Predicted House Prices")
+    st.write(predictions)
+
+# Predict house price for entered data
 price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
 
-# Show predicted price
+# Show predicted price for entered data
 st.subheader("Predicted House Price")
 st.write(price[0])
