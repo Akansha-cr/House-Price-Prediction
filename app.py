@@ -2,43 +2,48 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-# Load data
-df = pd.read_csv('housing.csv')
-
-# Build model
-model = LinearRegression()
-model.fit(df[['latitude', 'longitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','price']], df['price'])
-
 # Define UI elements
 st.title("House Price Prediction System")
-st.header("Enter House Details")
-total_bedrooms = st.number_input("No. of Bedrooms")
-total_rooms = st.number_input("No. of rooms")
-latitude = st.number_input("Latitude")
-longitude = st.number_input("Longitude")
-housing_median_age = st.number_input("housing_median_age")
-population = st.number_input("population")
-households = st.number_input("households")
-median_income = st.number_input("median income")
+st.header("Enter House Details or Upload a CSV file")
 
-'''
-# Add file uploader
-csv_file = st.file_uploader("Upload CSV", type=['csv'])
+# Create a file uploader
+uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
-if csv_file is not None:
-    # Read uploaded CSV file
-    uploaded_data = pd.read_csv(csv_file)
+# Load data if a file is uploaded
+if uploaded_file is not None:
+    df = pd.read_csv(uploaded_file)
 
-    # Generate predictions for uploaded data
-    predictions = model.predict(uploaded_data[['latitude', 'longitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income', 'price']])
+    # Build model
+    model = LinearRegression()
+    model.fit(df[['latitude', 'longitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income']], df['price'])
+
+    # Predict house prices
+    prices = model.predict(df[['latitude', 'longitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income']])
+    
+    # Add predicted prices to the DataFrame
+    df['predicted_price'] = prices
 
     # Show predicted prices
     st.subheader("Predicted House Prices")
-    st.write(predictions)
-'''
-# Predict house price for entered data
-price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
+    st.write(df)
+else:
+    # Get user input
+    total_bedrooms = st.number_input("No. of Bedrooms")
+    total_rooms = st.number_input("No. of rooms")
+    latitude = st.number_input("Latitude")
+    longitude = st.number_input("Longitude")
+    housing_median_age = st.number_input("housing_median_age")
+    population = st.number_input("population")
+    households = st.number_input("households")
+    median_income = st.number_input("median income")
 
-# Show predicted price for entered data
-st.subheader("Predicted House Price")
-st.write(price[0])
+    # Build model
+    model = LinearRegression()
+    model.fit([[latitude, longitude, housing_median_age, total_rooms, total_bedrooms, population, households, median_income]], [0])
+
+    # Predict house price
+    price = model.predict([[latitude, longitude, housing_median_age, total_rooms, total_bedrooms, population, households, median_income]])
+
+    # Show predicted price
+    st.subheader("Predicted House Price")
+    st.write(price[0])
