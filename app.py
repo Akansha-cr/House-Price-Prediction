@@ -7,7 +7,7 @@ df = pd.read_csv('housing.csv')
 
 # Build model
 model = LinearRegression()
-#model.fit(df[['latitude', 'longitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','price']], df['price'])
+model.fit(df[['latitude', 'longitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','price']], df['price'])
 
 # Define UI elements
 st.title("House Price Prediction System")
@@ -21,6 +21,7 @@ population = st.number_input("population")
 households = st.number_input("households")
 median_income = st.number_input("median income")
 
+'''
 # Add file uploader
 csv_file = st.file_uploader("Upload CSV", type=['csv'])
 
@@ -34,10 +35,10 @@ if csv_file is not None:
     # Show predicted prices
     st.subheader("Predicted House Prices")
     st.write(predictions)
-
+'''
 # Predict house price for entered data
-#price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
+price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
 
 # Show predicted price for entered data
-#st.subheader("Predicted House Price")
-#st.write(price[0])
+st.subheader("Predicted House Price")
+st.write(price[0])
