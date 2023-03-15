@@ -7,7 +7,7 @@ df = pd.read_csv('housing.csv')
 
 # Build model
 model = LinearRegression()
-model.fit(df[['latitude', 'longitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','price']], df['price'])
+#model.fit(df[['latitude', 'longitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','price']], df['price'])
 
 # Define UI elements
 st.title("House Price Prediction System")
