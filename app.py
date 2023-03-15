@@ -36,8 +36,8 @@ if csv_file is not None:
     st.write(predictions)
 
 # Predict house price for entered data
-price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
+#price = model.predict([[housing_median_age,total_rooms,total_bedrooms,population,households,median_income,price,latitude,longitude]])
 
 # Show predicted price for entered data
-st.subheader("Predicted House Price")
-st.write(price[0])
+#st.subheader("Predicted House Price")
+#st.write(price[0])
