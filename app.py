@@ -5,7 +5,7 @@ from sklearn.impute import SimpleImputer
 
 # Load data
 df = pd.read_csv('housing.csv')
-
+df = df.drop['NEAR BAY']
 # Impute missing values
 imputer = SimpleImputer(strategy='mean')
 df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
