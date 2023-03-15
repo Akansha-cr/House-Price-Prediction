@@ -1,6 +1,14 @@
 import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
+from sklearn.impute import SimpleImputer
+
+# Load data
+df = pd.read_csv('housing.csv')
+
+# Impute missing values
+imputer = SimpleImputer(strategy='mean')
+df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
 
 # Define UI elements
 st.title("House Price Prediction System")
